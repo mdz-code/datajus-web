@@ -1,6 +1,22 @@
 import Head from 'next/head'
 
+import { useState  } from 'react'
+
 export default function Home() {
+
+  const [value, setValue] = useState({value: '', error: {status: false}, help: {status: false}})
+
+  const functionFeedbackObject = {
+    value: setValue
+  }
+
+  const valueFeedbackObject = {
+    value: value
+  }
+
+
+
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-2">
       <Head>
@@ -8,75 +24,102 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 space-y-20">
+        <InputLabel data={value.value} setData={setValue} error={value.error} help={value.help}/>
+        <div className="w-full space-y-4"> 
+          <Button feedbackValueObject={valueFeedbackObject} feedbackFunctionObject={functionFeedbackObject} type="action">Aviso</Button>
+          <Button feedbackValueObject={valueFeedbackObject} feedbackFunctionObject={functionFeedbackObject}>Erro</Button>
         </div>
+
+
       </main>
 
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
+    </div>
+  )
+}
+
+function Button({ children, type, feedbackFunctionObject, feedbackValueObject }) {
+
+  function setError(feedbackObject) {
+    const inputFeedback = feedbackValueObject['value']
+    const setFunction = feedbackFunctionObject['value']
+    const newValue = {...inputFeedback, ...feedbackObject}
+    
+    console.log(newValue)
+    setFunction(newValue)
+  }
+
+
+  function handlingClick() {
+    const feedbackObject = type === 'action' ? {help: { status: true, message: 'Feedback de aviso' }, error: { status: false, message: 'Feedback de erro' }} : { help: { status: false, message: 'Feedback de aviso' }, error: { status: true, message: 'Feedback de erro' }}
+    setError(feedbackObject)
+  }
+
+  return(
+    <div className="w-full">
+      <button onClick={handlingClick} className={type === 'action' ? "p-3 bg-blue-500 w-full text-white mx-4 rounded-lg" : "p-3 bg-blue-100 w-full text-blue-500 mx-4 rounded-lg" }>{children}</button>
+    </div>
+  )
+}
+
+// INPUTS
+function Input() {
+
+  return(
+    <div className="w-full">
+      <input placeholder="Placeholder" className="bg-gray-100 text-sm p-4 focus:outline-none w-full rounded-lg mx-4"/>
+    </div>
+  )
+}
+
+function InputLabel({ type, data, setData, error, help }) {
+
+  return (
+    <div className="w-full space-y-1">
+      <label className="text-left mx-4">Field label</label>
+      <Input/>
+
+      {help.status && <InputAlert type='info' message="Este é um exemplo de aviso"/>}
+      {error.status && <InputAlert type='error' message="Este é um exemplo de erro"/>}
+
+    </div>
+  )
+}
+
+function InputAlert({ message, type }) {
+
+  const styleTypes = {
+    info: "flex pt-2 text-blue-500 text-sm text-left mx-4 absolute",
+    error: "flex pt-2 text-red-500 text-sm text-left mx-4 absolute"
+  }
+
+  return (
+    <div>
+      <h3 className={styleTypes[type]}>
+        <Icon type={type}/>
+        {message}
+      </h3>
+    </div>
+  )
+}
+
+function Icon({ type }) {
+  
+  return (
+    <div>
+      { type === 'info' && (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+        )
+      }
+      {
+        type === 'error' && (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+        )
+      }
     </div>
   )
 }
