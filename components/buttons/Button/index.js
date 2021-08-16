@@ -38,6 +38,12 @@ export default function Button({ children, type="default", data, infos }) {
     createDocument: createDTODocBuild
   }
 
+  const objectRequestHandling = {
+    auth: handlingClick,
+    createDocument: handlingClick,
+    modal: modalClick
+  }
+
   const router = useRouter()
 
   
@@ -58,6 +64,14 @@ export default function Button({ children, type="default", data, infos }) {
       key: keys[0],
       value: object[keys[0]]
     }
+  }
+
+  async function modalClick(event) {
+    event.preventDefault()
+    const value = data['value']
+    const setValue = data['setValue']
+    setValue(!value)
+
   }
     
   async function handlingClick(event) {
@@ -90,9 +104,11 @@ export default function Button({ children, type="default", data, infos }) {
 
   const ButtonStyle = ButtonStyles[type]
 
+  const functionClick = objectRequestHandling[infos.type]
+
   return(
     <div className="mx-4">
-      <button onClick={handlingClick} className={ButtonStyle}>{children}</button>
+      <button onClick={functionClick} className={ButtonStyle}>{children}</button>
     </div>
   )
 }
