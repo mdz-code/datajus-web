@@ -4,14 +4,59 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 
 export default function Button({ children, type="default", data, infos }) {
-  // function setError(feedbackObject) {
-  //   const inputFeedback = feedbackValueObject['value']
-  //   const setFunction = feedbackFunctionObject['value']
-  //   const newValue = {...inputFeedback, ...feedbackObject}
-    
-  //   console.log(newValue)
-  //   setFunction(newValue)
-  // }
+
+  const objectRequestHandling = {
+    auth: handlingClick,
+    createDocument: handlingClick,
+    modal: modalClick,
+    signature: sigin,
+    download: downloadClick
+  }
+
+  const router = useRouter()
+
+  async function downloadClick() {
+    console.log(data)
+    console.log("🕵️ Download Contratado agora")
+
+  }
+
+
+  async function modalClick(event) {
+    event.preventDefault()
+    const value = data['value']
+    const setValue = data['setValue']
+    setValue(!value)
+  }
+
+  async function sigin() {
+    const dto = { ...data, type: 'font'}
+    const endpoint = 'https://datajus-apis.herokuapp.com/storeSignatures'
+
+    const response = await axios({
+      method: 'POST',
+      url: endpoint,
+      data: dto
+    })
+    console.log(dto)
+    console.log(response.data)
+
+
+    console.log("🖋️ assinando documento")
+  }
+
+
+  // CALL API
+
+  function tidyRequestData(data) {
+    let response = {}
+
+    for (let item in data) {
+      response[item] = data[item].value
+    }
+
+    return response
+  }
 
   function createDTOAuth(data, infos) {
     return tidyRequestData(data)
@@ -27,34 +72,14 @@ export default function Button({ children, type="default", data, infos }) {
     return returnObject
   }
 
-  const pathBuilRouter = {
-    auth: 'buildDoc',
-    createDocument: 'viewDoc'
-  }
-
-
   const objectBuildDTO = {
     auth: createDTOAuth,
     createDocument: createDTODocBuild
   }
 
-  const objectRequestHandling = {
-    auth: handlingClick,
-    createDocument: handlingClick,
-    modal: modalClick
-  }
-
-  const router = useRouter()
-
-  
-  function tidyRequestData(data) {
-    let response = {}
-
-    for (let item in data) {
-      response[item] = data[item].value
-    }
-
-    return response
+  const pathBuilRouter = {
+    auth: 'buildDoc',
+    createDocument: 'viewDoc'
   }
 
   function getResponse(object) {
@@ -64,14 +89,6 @@ export default function Button({ children, type="default", data, infos }) {
       key: keys[0],
       value: object[keys[0]]
     }
-  }
-
-  async function modalClick(event) {
-    event.preventDefault()
-    const value = data['value']
-    const setValue = data['setValue']
-    setValue(!value)
-
   }
     
   async function handlingClick(event) {
@@ -98,8 +115,6 @@ export default function Button({ children, type="default", data, infos }) {
 
     console.log('👩‍🌾 cadastrando assinador')
     router.push(pathRouter)
-    // const feedbackObject = type === 'action' ? {help: { status: true, message: 'Feedback de aviso' }, error: { status: false, message: 'Feedback de erro' }} : { help: { status: false, message: 'Feedback de aviso' }, error: { status: true, message: 'Feedback de erro' }}
-    // setError(feedbackObject),
   }
 
   const ButtonStyle = ButtonStyles[type]
