@@ -117,7 +117,7 @@ function ConfirmationModal({ data }) {
         <div className="justify-center items-end flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
             
                 {
-                    !allowDownload ? (
+                    allowDownload ? (
                         <div className="bg-green-50 m-4 space-y-3 p-3 rounded-xl">
                             <div className="space-y-2">
                                 <h1 className="text-green-700 font-medium">Seu documento foi assinado com sucesso!</h1>
@@ -133,7 +133,7 @@ function ConfirmationModal({ data }) {
                                 <h3 className="text-xs">Confirmo que li e aceito os termos e condições de uso.</h3>
                             </div>
                             <div className="w-full pb-4">
-                                <Button infos={{ type: 'signature' }} data={allowData} type="action">Aceitar</Button>
+                                <Button infos={{ type: 'signature' }} data={data} transaction={allowData} type="action">Aceitar</Button>
                             </div>
                         </div>
                         </div>
@@ -262,7 +262,7 @@ export async function getServerSideProps(context) {
 
     const response = await axios({
         method: 'GET',
-        url: `https://datajus-apis.herokuapp.com/getDocument/${contractId}`
+        url: `https://datajus-apis.herokuapp.com/getDocument/${contractId}/false`
     })
 
     return {
