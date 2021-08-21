@@ -3,7 +3,7 @@ import { setCookie } from 'nookies'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-export default function Button({ children, type="default", data, infos }) {
+export default function Button({ children, type="default", data, infos, transaction }) {
 
   const objectRequestHandling = {
     auth: handlingClick,
@@ -16,9 +16,8 @@ export default function Button({ children, type="default", data, infos }) {
   const router = useRouter()
 
   async function downloadClick() {
-    console.log(data)
     console.log("🕵️ Download Contratado agora")
-
+    router.push(`https://datajus-apis.herokuapp.com/getDocument/${data}/true`)
   }
 
 
@@ -30,19 +29,32 @@ export default function Button({ children, type="default", data, infos }) {
   }
 
   async function sigin() {
+    console.log('CHEGOU AQUI')
+    const { setValue, value } = transaction
+    console.log('CHEGOU AQUI 2')
+
     const dto = { ...data, type: 'font'}
+    console.log('CHEGOU AQUI 3')
+    console.log(dto)
+
     const endpoint = 'https://datajus-apis.herokuapp.com/storeSignatures'
+    console.log('CHEGOU AQUI 4')
 
     const response = await axios({
       method: 'POST',
       url: endpoint,
       data: dto
     })
+    console.log('CHEGOU AQUI 5')
+
+
+    
     console.log(dto)
     console.log(response.data)
 
 
     console.log("🖋️ assinando documento")
+    setValue(!value)
   }
 
 
